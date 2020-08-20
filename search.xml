@@ -130,7 +130,8 @@
   <entry>
     <title>CSS中的BFC详解</title>
     <url>/2020/07/20/CSS%E4%B8%AD%E7%9A%84BFC%E8%AF%A6%E8%A7%A3/</url>
-    <content><![CDATA[<pre><code>这篇文章是我对BFC的理解及总结，带你揭开BFC的面纱。你将会知道BFC是什么，形成BFC的条件，BFC的相关特性，以及他的实际应用。</code></pre><a id="more"></a>
+    <content><![CDATA[<p>这篇文章是我对BFC的理解及总结，带你揭开BFC的面纱。你将会知道BFC是什么，形成BFC的条件，BFC的相关特性，以及他的实际应用。</p>
+<a id="more"></a>
 <h2 id="一、何为BFC"><a href="#一、何为BFC" class="headerlink" title="一、何为BFC"></a>一、何为BFC</h2><p>BFC（Block Formatting Context）格式化上下文，是Web页面中盒模型布局的CSS渲染模式，指一个独立的渲染区域或者说是一个隔离的独立容器。</p>
 <h2 id="二、形成BFC的条件"><a href="#二、形成BFC的条件" class="headerlink" title="二、形成BFC的条件"></a>二、形成BFC的条件</h2><p>1、浮动元素，float 除 none 以外的值；<br>2、定位元素，position（absolute，fixed）；<br>3、display 为以下其中之一的值 inline-block，table-cell，table-caption；<br>4、overflow 除了 visible 以外的值（hidden，auto，scroll）；</p>
 <h2 id="三、BFC的特性"><a href="#三、BFC的特性" class="headerlink" title="三、BFC的特性"></a>三、BFC的特性</h2><p>1.内部的Box会在垂直方向上一个接一个的放置。<br>2.垂直方向上的距离由margin决定<br>3.bfc的区域不会与float的元素区域重叠。<br>4.计算bfc的高度时，浮动元素也参与计算<br>5.bfc就是页面上的一个独立容器，容器里面的子元素不会影响外面元素。</p>
