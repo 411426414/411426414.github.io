@@ -46,8 +46,7 @@
     <content><![CDATA[<p>Ajax 即“Asynchronous Javascript And XML”（异步 JavaScript 和 XML），是指一种创建交互式、快速动态网页应用的网页开发技术，无需重新加载整个网页的情况下，能够更新部分网页的技术。<br>通过在后台与服务器进行少量数据交换，Ajax 可以使网页实现异步更新。这意味着可以在不重新加载整个网页的情况下，对网页的某部分进行更新。</p>
 <a id="more"></a>
 <p><strong>一、 ajax 编码</strong></p>
-<p><strong>1、 ajax  是一门创建动态网页的技术。</strong></p>
-<p><strong>2、 ajax 优点</strong></p>
+<p><strong>1、 ajax  是一门创建动态网页的技术。</strong><br><strong>2、 ajax 优点</strong></p>
 <p>2.0.1  可以实现异步编码，提高用户体验</p>
 <p>2.0.2  可以优化客户端与服务端的传输</p>
 <p>2.0.3  可以快速创建动态网页，页面局部刷新</p>
