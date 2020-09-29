@@ -271,7 +271,7 @@ Promise.race 方法同样是将多个 Promise 实例，包装成一个新的 Pro
 <p>上面代码将 jQuery 生成 deferred 对象，转为一个新的 ES6 的 Promise 对象。<br>如果 Promise.resolve 方法的参数，不是具有 then 方法的对象（又称 thenable 对象），则返回一个新的 Promise 对象，且它的状态为fulfilled。</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var p &#x3D; Promise.resolve(&#39;Hello&#39;);</span><br><span class="line">p.then(function (s)&#123;</span><br><span class="line">  console.log(s)</span><br><span class="line">&#125;);</span><br><span class="line">&#x2F;&#x2F; Hello</span><br></pre></td></tr></table></figure>
 <p>上面代码生成一个新的Promise对象的实例p，它的状态为fulfilled，所以回调函数会立即执行，Promise.resolve方法的参数就是回调函数的参数。<br>如果Promise.resolve方法的参数是一个Promise对象的实例，则会被原封不动地返回。<br>Promise.reject(reason)方法也会返回一个新的Promise实例，该实例的状态为rejected。Promise.<br>reject方法的参数reason，会被传递给实例的回调函数。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var p &#x3D; Promise.reject(&#39;出错了&#39;);</span><br><span class="line">p.then(null, function (s)&#123;</span><br><span class="line">  console.log(s)</span><br><span class="line">&#125;);</span><br><span class="line">&#x2F;&#x2F; 出错了</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">var p &#x3D; Promise.reject(&#39;出错了&#39;);</span><br><span class="line">p.then(null, function (s)&#123;</span><br><span class="line">  console.log(s)</span><br><span class="line">&#125;);</span><br><span class="line">&#x2F;&#x2F; 出错了</span><br></pre></td></tr></table></figure>
 <p>上面代码生成一个Promise对象的实例，状态为rejected，回调函数会立即执行。</p>
 <blockquote>
 <p><strong>参考链接：</strong></p>
