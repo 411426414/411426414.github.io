@@ -174,7 +174,6 @@
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;i class&#x3D;&quot;fa fa-download&quot; aria-hidden&#x3D;&quot;true&quot; title&#x3D;&quot;下载&quot;&gt;&lt;&#x2F;i&gt;</span><br></pre></td></tr></table></figure>
 <p><strong>1.下载项目中的文件</strong><br>如果要下载的是一个excel文件模板，可以先将该文件放在项目文件夹下面，然后在页面下载按钮上加上onclick事件：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;i class&#x3D;&quot;fa fa-download&quot; aria-hidden&#x3D;&quot;true&quot; title&#x3D;&quot;下载&quot; onclick&#x3D;&quot;window.open(&#39;file&#x2F;user.xlsx&#39;)&quot;&gt;&lt;&#x2F;i&gt;</span><br></pre></td></tr></table></figure>
-
 <p>这样在点击图标之后，文件就会自动下载了。</p>
 <p><strong>2.发送请求地址下载文件</strong></p>
 <p>JQuery的ajax函数的返回类型只有xml、text、json、html等类型，没有“流”类型，所以我们要实现ajax下载，不能够使用相应的ajax函数进行文件下载。但可以用js生成一个form，用这个form提交参数，并返回“流”类型的数据。在实现过程中，页面也没有进行刷新。</p>
