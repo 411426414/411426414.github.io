@@ -61,6 +61,7 @@
     <url>/2020/07/18/%E5%B0%86pip%E6%BA%90%E6%9B%B4%E6%8D%A2%E5%88%B0%E5%9B%BD%E5%86%85%E9%95%9C%E5%83%8F/</url>
     <content><![CDATA[<p>用pip管理工具安装库文件时，默认使用国外的源文件，因此在国内的下载速度会比较慢，可能只有50KB/s。国内的一些顶级科研机构已经给我们准备好了各种镜像，下载速度可达2MB/s。</p>
 <a id="more"></a>
+
 <h1 id="将pip源更换到国内镜像"><a href="#将pip源更换到国内镜像" class="headerlink" title="将pip源更换到国内镜像"></a>将pip源更换到国内镜像</h1><pre><code>比较常用的国内镜像包括：</code></pre><table>
 <thead>
 <tr>
