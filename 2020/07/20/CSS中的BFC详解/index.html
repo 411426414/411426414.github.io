@@ -223,7 +223,7 @@
     </span>
     <span>
       <span class="iconfont icon-calendar-check"></span>
-      更新于:&nbsp;2020-10-07
+      更新于:&nbsp;2020-10-16
     </span>
     <span>
       <span class="iconfont icon-folder"></span>
@@ -289,6 +289,7 @@
   <div class="mdui-card-content mdui-typo mdui-p-x-4">
     <p>这篇文章是我对BFC的理解及总结，带你揭开BFC的面纱。你将会知道BFC是什么，形成BFC的条件，BFC的相关特性，以及他的实际应用。</p>
 <a id="more"></a>
+
 <h2 id="一、何为BFC"><a href="#一、何为BFC" class="headerlink" title="一、何为BFC"></a>一、何为BFC</h2><p>BFC（Block Formatting Context）格式化上下文，是Web页面中盒模型布局的CSS渲染模式，指一个独立的渲染区域或者说是一个隔离的独立容器。</p>
 <h2 id="二、形成BFC的条件"><a href="#二、形成BFC的条件" class="headerlink" title="二、形成BFC的条件"></a>二、形成BFC的条件</h2><p>1、浮动元素，float 除 none 以外的值；<br>2、定位元素，position（absolute，fixed）；<br>3、display 为以下其中之一的值 inline-block，table-cell，table-caption；<br>4、overflow 除了 visible 以外的值（hidden，auto，scroll）；</p>
 <h2 id="三、BFC的特性"><a href="#三、BFC的特性" class="headerlink" title="三、BFC的特性"></a>三、BFC的特性</h2><p>1.内部的Box会在垂直方向上一个接一个的放置。<br>2.垂直方向上的距离由margin决定<br>3.bfc的区域不会与float的元素区域重叠。<br>4.计算bfc的高度时，浮动元素也参与计算<br>5.bfc就是页面上的一个独立容器，容器里面的子元素不会影响外面元素。<br>看到这里是不是有丈二和尚摸不着头脑的感觉，下面我就用案例来帮助理解认识：</p>
@@ -324,7 +325,8 @@
 <p>（2）利用bfc防止环绕</p>
 <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.left</span> &#123;</span><br><span class="line">	<span class="attribute">float</span>: left;</span><br><span class="line">	<span class="attribute">width</span>: <span class="number">100px</span>;</span><br><span class="line">	<span class="attribute">height</span>: <span class="number">100px</span>;</span><br><span class="line">	<span class="attribute">background-color</span>: yellow;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-tag">p</span> &#123;</span><br><span class="line">	<span class="attribute">background-color</span>: green;</span><br><span class="line">	<span class="attribute">overflow</span>: hidden;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h3 id="（4）BFC包含浮动的块"><a href="#（4）BFC包含浮动的块" class="headerlink" title="（4）BFC包含浮动的块"></a>（4）BFC包含浮动的块</h3><p>这个是大家再熟悉不过的了，利用overflow:hidden清除浮动嘛，因为浮动的盒子无法撑出处于标准文档流的父盒子的height。这个就不过多解释了，相信大家都早已理解。</p>
+<p>（3）BFC包含浮动的块</p>
+<p>这个是大家再熟悉不过的了，利用overflow:hidden清除浮动嘛，因为浮动的盒子无法撑出处于标准文档流的父盒子的height。这个就不过多解释了，相信大家都早已理解。</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>我希望这篇文章已经向你展示了BFC的相关特性，以及他们如何影响元素在页面上的视觉定位。所有的例子都展示了它们在实际案例中的应用，这应该会使得他们更加清晰。</p>
 <p>如果你有任何东西想要补充，请在评论中留言，欢迎共同讨论。</p>
 
@@ -361,7 +363,7 @@
     <ul class="mdui-menu" id="toc">
       <li class="mdui-menu-item">
         <a href="/2020/07/20/CSS%E4%B8%AD%E7%9A%84BFC%E8%AF%A6%E8%A7%A3/" id="toc-header" class="mdui-ripple">文章目录</a>
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、何为BFC"><span class="toc-number">1.</span> <span class="toc-text">一、何为BFC</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、形成BFC的条件"><span class="toc-number">2.</span> <span class="toc-text">二、形成BFC的条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、BFC的特性"><span class="toc-number">3.</span> <span class="toc-text">三、BFC的特性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四、实践是检验真理的唯一标准"><span class="toc-number">4.</span> <span class="toc-text">四、实践是检验真理的唯一标准</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-BFC中的盒子对齐"><span class="toc-number">4.1.</span> <span class="toc-text">1. BFC中的盒子对齐</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-外边距折叠"><span class="toc-number">4.2.</span> <span class="toc-text">2. 外边距折叠</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#（4）BFC包含浮动的块"><span class="toc-number">4.3.</span> <span class="toc-text">（4）BFC包含浮动的块</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">5.</span> <span class="toc-text">总结</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、何为BFC"><span class="toc-number">1.</span> <span class="toc-text">一、何为BFC</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、形成BFC的条件"><span class="toc-number">2.</span> <span class="toc-text">二、形成BFC的条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、BFC的特性"><span class="toc-number">3.</span> <span class="toc-text">三、BFC的特性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四、实践是检验真理的唯一标准"><span class="toc-number">4.</span> <span class="toc-text">四、实践是检验真理的唯一标准</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-BFC中的盒子对齐"><span class="toc-number">4.1.</span> <span class="toc-text">1. BFC中的盒子对齐</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-外边距折叠"><span class="toc-number">4.2.</span> <span class="toc-text">2. 外边距折叠</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">5.</span> <span class="toc-text">总结</span></a></li></ol>
       </li>
     </ul>
   </div>
