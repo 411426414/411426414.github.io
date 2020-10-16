@@ -1,6 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>CSS中的BFC详解</title>
+    <url>/2020/07/20/CSS%E4%B8%AD%E7%9A%84BFC%E8%AF%A6%E8%A7%A3/</url>
+    <content><![CDATA[<p>这篇文章是我对BFC的理解及总结，带你揭开BFC的面纱。你将会知道BFC是什么，形成BFC的条件，BFC的相关特性，以及他的实际应用。</p>
+<a id="more"></a>
+<h2 id="一、何为BFC"><a href="#一、何为BFC" class="headerlink" title="一、何为BFC"></a>一、何为BFC</h2><p>BFC（Block Formatting Context）格式化上下文，是Web页面中盒模型布局的CSS渲染模式，指一个独立的渲染区域或者说是一个隔离的独立容器。</p>
+<h2 id="二、形成BFC的条件"><a href="#二、形成BFC的条件" class="headerlink" title="二、形成BFC的条件"></a>二、形成BFC的条件</h2><p>1、浮动元素，float 除 none 以外的值；<br>2、定位元素，position（absolute，fixed）；<br>3、display 为以下其中之一的值 inline-block，table-cell，table-caption；<br>4、overflow 除了 visible 以外的值（hidden，auto，scroll）；</p>
+<h2 id="三、BFC的特性"><a href="#三、BFC的特性" class="headerlink" title="三、BFC的特性"></a>三、BFC的特性</h2><p>1.内部的Box会在垂直方向上一个接一个的放置。<br>2.垂直方向上的距离由margin决定<br>3.bfc的区域不会与float的元素区域重叠。<br>4.计算bfc的高度时，浮动元素也参与计算<br>5.bfc就是页面上的一个独立容器，容器里面的子元素不会影响外面元素。<br>看到这里是不是有丈二和尚摸不着头脑的感觉，下面我就用案例来帮助理解认识：</p>
+<h2 id="四、实践是检验真理的唯一标准"><a href="#四、实践是检验真理的唯一标准" class="headerlink" title="四、实践是检验真理的唯一标准"></a>四、实践是检验真理的唯一标准</h2><h3 id="1-BFC中的盒子对齐"><a href="#1-BFC中的盒子对齐" class="headerlink" title="1. BFC中的盒子对齐"></a>1. BFC中的盒子对齐</h3><p>特性的第一条是：内部的Box（块级元素）会在垂直方向上一个接一个的放置。（这条特性不必纠结，即便不在BFC里块级盒子也会垂直排列）</p>
+<h3 id="2-外边距折叠"><a href="#2-外边距折叠" class="headerlink" title="2. 外边距折叠"></a>2. 外边距折叠</h3><p>特性的第二条：垂直方向上的距离由margin决定<br>在常规文档流中，两个兄弟盒子之间的垂直距离是由他们的外边距所决定的，但不是他们的两个外边距之和，而是以较大的为准。<br>html：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"container"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"box"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"box"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>css：</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.container</span> &#123;</span><br><span class="line">  <span class="attribute">overflow</span>: hidden;</span><br><span class="line">  <span class="attribute">width</span>: <span class="number">100px</span>;</span><br><span class="line">  <span class="attribute">height</span>: <span class="number">100px</span>;</span><br><span class="line">  <span class="attribute">background-color</span>: red;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.box1</span> &#123;</span><br><span class="line">  <span class="attribute">height</span>: <span class="number">20px</span>;</span><br><span class="line">  <span class="attribute">margin</span>: <span class="number">10px</span> <span class="number">0</span>;</span><br><span class="line">  <span class="attribute">background-color</span>: green;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.box2</span> &#123;</span><br><span class="line">	<span class="attribute">height</span>: <span class="number">20px</span>;</span><br><span class="line">	<span class="attribute">margin</span>: <span class="number">20px</span> <span class="number">0</span>;</span><br><span class="line">	<span class="attribute">background-color</span>: green;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 这里我门可以看到，第一个子盒子有上边距（不会发生margin穿透的问题）；两个子盒子的垂直距离为20px而不是30px，因为垂直外边距会折叠，间距以较大的为准。<br> 那么有没有方法让垂直外边距不折叠呢？答案是：有。特性的第5条就说了：bfc就是页面上的一个独立容器，容器里面的子元素不会影响外面元素，同样外面的元素不会影响到BFC内的元素。所以就让box1或box2再处于另一个BFC中就行了。<br>html：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"container"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"wrapper"</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"box1"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"box2"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>css：</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.container</span> &#123;</span><br><span class="line">	<span class="attribute">overflow</span>: hidden;</span><br><span class="line">	<span class="attribute">width</span>: <span class="number">100px</span>;</span><br><span class="line">	<span class="attribute">height</span>: <span class="number">100px</span>;</span><br><span class="line">	<span class="attribute">background-color</span>: red;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.wrapper</span> &#123;</span><br><span class="line">	<span class="attribute">overflow</span>: hidden;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.box1</span> &#123;</span><br><span class="line">	<span class="attribute">height</span>: <span class="number">20px</span>;</span><br><span class="line">	<span class="attribute">margin</span>: <span class="number">10px</span> <span class="number">0</span>;</span><br><span class="line">	<span class="attribute">background-color</span>: green;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.box2</span> &#123;</span><br><span class="line">	<span class="attribute">height</span>: <span class="number">20px</span>;</span><br><span class="line">	<span class="attribute">margin</span>: <span class="number">20px</span> <span class="number">0</span>;</span><br><span class="line">	<span class="attribute">background-color</span>: green;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>（3）不被浮动元素覆盖<br>以常见的<strong><code>两栏布局</code></strong>为例。<br>左边固定宽度，右边不设宽，因此右边的宽度自适应，随浏览器窗口大小的变化而变化。<br>html：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"column"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"column"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>css：</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.column</span><span class="selector-pseudo">:nth-of-type(1)</span> &#123;</span><br><span class="line">	<span class="attribute">float</span>: left;</span><br><span class="line">	<span class="attribute">width</span>: <span class="number">200px</span>;</span><br><span class="line">	<span class="attribute">height</span>: <span class="number">300px</span>;</span><br><span class="line">	<span class="attribute">margin-right</span>: <span class="number">10px</span>;</span><br><span class="line">	<span class="attribute">background-color</span>: red;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.column</span><span class="selector-pseudo">:nth-of-type(2)</span> &#123;</span><br><span class="line">	<span class="attribute">overflow</span>: hidden;<span class="comment">/*创建bfc */</span></span><br><span class="line">	<span class="attribute">height</span>: <span class="number">300px</span>;</span><br><span class="line">	<span class="attribute">background-color</span>: purple;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>还有<strong><code>三栏布局</code></strong>。</p>
+<p>左右两边固定宽度，中间不设宽，因此中间的宽度自适应，随浏览器的大小变化而变化。<br>html：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"contain"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"column"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"column"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"column"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>css：</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.column</span><span class="selector-pseudo">:nth-of-type(1)</span>,</span><br><span class="line"><span class="selector-class">.column</span><span class="selector-pseudo">:nth-of-type(2)</span> &#123;</span><br><span class="line">	<span class="attribute">float</span>: left;</span><br><span class="line">	<span class="attribute">width</span>: <span class="number">100px</span>;</span><br><span class="line">	<span class="attribute">height</span>: <span class="number">300px</span>;</span><br><span class="line">	<span class="attribute">background-color</span>: green;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.column</span><span class="selector-pseudo">:nth-of-type(2)</span> &#123;</span><br><span class="line">	<span class="attribute">float</span>: right;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.column</span><span class="selector-pseudo">:nth-of-type(3)</span> &#123;</span><br><span class="line">	<span class="attribute">overflow</span>: hidden;  <span class="comment">/*创建bfc*/</span></span><br><span class="line">	<span class="attribute">height</span>: <span class="number">300px</span>;</span><br><span class="line">	<span class="attribute">background-color</span>: red;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>也可以用来<strong><code>防止字体环绕</code></strong>：</p>
+<p>众所周知，浮动的盒子会遮盖下面的盒子，但是下面盒子里的文字是不会被遮盖的，文字反而还会环绕浮动的盒子。这也是一个比较有趣的特性。</p>
+<p>html：</p>
+<pre><code>&lt;div class=&quot;left&quot;&gt;&lt;/div&gt;
+&lt;p&gt;你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好
+   你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好
+   你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好
+&lt;/p&gt;</code></pre><p>css：</p>
+<p>（1）环绕</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.left &#123;</span><br><span class="line">	float: left;</span><br><span class="line">	width: 100px;</span><br><span class="line">	height: 100px;</span><br><span class="line">	background-color: yellow;</span><br><span class="line">&#125;	</span><br><span class="line">p &#123;</span><br><span class="line">	background-color: green;</span><br><span class="line">	 &#x2F;* overflow: hidden; *&#x2F;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>（2）利用bfc防止环绕</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.left</span> &#123;</span><br><span class="line">	<span class="attribute">float</span>: left;</span><br><span class="line">	<span class="attribute">width</span>: <span class="number">100px</span>;</span><br><span class="line">	<span class="attribute">height</span>: <span class="number">100px</span>;</span><br><span class="line">	<span class="attribute">background-color</span>: yellow;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-tag">p</span> &#123;</span><br><span class="line">	<span class="attribute">background-color</span>: green;</span><br><span class="line">	<span class="attribute">overflow</span>: hidden;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="（4）BFC包含浮动的块"><a href="#（4）BFC包含浮动的块" class="headerlink" title="（4）BFC包含浮动的块"></a>（4）BFC包含浮动的块</h3><p>这个是大家再熟悉不过的了，利用overflow:hidden清除浮动嘛，因为浮动的盒子无法撑出处于标准文档流的父盒子的height。这个就不过多解释了，相信大家都早已理解。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>我希望这篇文章已经向你展示了BFC的相关特性，以及他们如何影响元素在页面上的视觉定位。所有的例子都展示了它们在实际案例中的应用，这应该会使得他们更加清晰。</p>
+<p>如果你有任何东西想要补充，请在评论中留言，欢迎共同讨论。</p>
+]]></content>
+      <categories>
+        <category>CSS</category>
+      </categories>
+      <tags>
+        <tag>CSS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>WebStorm 中出现Warnings：&#39;var&#39; used instead of &#39;let&#39; or &#39;const&#39;的解决办法</title>
+    <url>/2020/07/18/WebStorm/</url>
+    <content><![CDATA[<p>WebStorm中出现Warnings：’var’ used instead of ‘let’ or ‘const’的解决办法</p>
+<a id="more"></a>
+<p>点击File→Settings→Language &amp; Frameworks→JavaScript<br>将JavaScript language version中的ECMAScript 6切换为ECMAScript 5.1即可<br><a href="https://img-blog.csdnimg.cn/20190411211655595.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MjAzMjEwNw==,size_16,color_FFFFFF,t_70" target="_blank" rel="noopener">!img</a></p>
+]]></content>
+      <categories>
+        <category>WebStorm</category>
+      </categories>
+      <tags>
+        <tag>WebStorm</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Promise对象</title>
+    <url>/2020/09/24/Promise%E5%AF%B9%E8%B1%A1/</url>
+    <content><![CDATA[<p>ECMAscript 6 原生提供了 Promise 对象。<br>Promise 对象代表了未来将要发生的事件，用来传递异步操作的消息。</p>
+<a id="more"></a>
+<h3 id="Promise-对象有以下两个特点"><a href="#Promise-对象有以下两个特点" class="headerlink" title="Promise 对象有以下两个特点:"></a>Promise 对象有以下两个特点:</h3><ol>
+<li>对象的状态不受外界影响。Promise 对象代表一个异步操作，有三种状态：</li>
+</ol>
+<ul>
+<li>pending: 初始状态，不是成功或失败状态。</li>
+<li>fulfilled: 意味着操作成功完成。</li>
+<li>rejected: 意味着操作失败。<br>只有异步操作的结果，可以决定当前是哪一种状态，任何其他操作都无法改变这个状态。这也是 Promise 这个名字的由来，它的英语意思就是「承诺」，表示其他手段无法改变。</li>
+</ul>
+<ol start="2">
+<li>一旦状态改变，就不会再变，任何时候都可以得到这个结果。Promise 对象的状态改变，只有两种可能：从 Pending 变为 Resolved 和从 Pending 变为 Rejected。只要这两种情况发生，状态就凝固了，不会再变了，会一直保持这个结果。就算改变已经发生了，你再对 Promise 对象添加回调函数，也会立即得到这个结果。这与事件（Event）完全不同，事件的特点是，如果你错过了它，再去监听，是得不到结果的。<h3 id="Promise-优缺点"><a href="#Promise-优缺点" class="headerlink" title="Promise 优缺点"></a>Promise 优缺点</h3>有了 Promise 对象，就可以将异步操作以同步操作的流程表达出来，避免了层层嵌套的回调函数。此外，Promise 对象提供统一的接口，使得控制异步操作更加容易。<br>Promise 也有一些缺点。首先，无法取消 Promise，一旦新建它就会立即执行，无法中途取消。其次，如果不设置回调函数，Promise 内部抛出的错误，不会反应到外部。第三，当处于 Pending 状态时，无法得知目前进展到哪一个阶段（刚刚开始还是即将完成）。<h3 id="Promise-创建"><a href="#Promise-创建" class="headerlink" title="Promise 创建"></a>Promise 创建</h3>要想创建一个 promise 对象、可以使用 new 来调用 Promise 的构造器来进行实例化。<br>下面是创建 promise 的步骤：<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var promise &#x3D; new Promise(function(resolve, reject) &#123;</span><br><span class="line">    &#x2F;&#x2F; 异步处理</span><br><span class="line">    &#x2F;&#x2F; 处理结束后、调用resolve 或 reject</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+Promise 构造函数包含一个参数和一个带有 resolve（解析）和 reject（拒绝）两个参数的回调。在回调中执行一些操作（例如异步），如果一切都正常，则调用 resolve，否则调用 reject。<h2 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var myFirstPromise &#x3D; new Promise(function(resolve, reject)&#123;</span><br><span class="line">    &#x2F;&#x2F;当异步代码执行成功时，我们才会调用resolve(...), 当异步代码失败时就会调用reject(...)</span><br><span class="line">    &#x2F;&#x2F;在本例中，我们使用setTimeout(...)来模拟异步代码，实际编码时可能是XHR请求或是HTML5的一些API方法.</span><br><span class="line">    setTimeout(function()&#123;</span><br><span class="line">        resolve(&quot;成功!&quot;); &#x2F;&#x2F;代码正常执行！</span><br><span class="line">    &#125;, 250);</span><br><span class="line">&#125;);</span><br><span class="line">myFirstPromise.then(function(successMessage)&#123;</span><br><span class="line">    &#x2F;&#x2F;successMessage的值是上面调用resolve(...)方法传入的值.</span><br><span class="line">    &#x2F;&#x2F;successMessage参数不一定非要是字符串类型，这里只是举个例子</span><br><span class="line">    document.write(&quot;Yay! &quot; + successMessage);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+对于已经实例化过的 promise 对象可以调用 promise.then() 方法，传递 resolve 和 reject 方法作为回调。<br>promise.then() 是 promise 最为常用的方法。<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">promise.then(onFulfilled, onRejected)</span><br></pre></td></tr></table></figure>
+promise简化了对error的处理，上面的代码我们也可以这样写：<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">promise.then(onFulfilled).catch(onRejected)</span><br></pre></td></tr></table></figure>
+<h2 id="Promise-Ajax"><a href="#Promise-Ajax" class="headerlink" title="Promise Ajax"></a>Promise Ajax</h2>下面是一个用 Promise 对象实现的 Ajax 操作的例子。<h2 id="实例-1"><a href="#实例-1" class="headerlink" title="实例"></a>实例</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">function ajax(URL) &#123;</span><br><span class="line">    return new Promise(function (resolve, reject) &#123;</span><br><span class="line">        var req &#x3D; new XMLHttpRequest(); </span><br><span class="line">        req.open(&#39;GET&#39;, URL, true);</span><br><span class="line">        req.onload &#x3D; function () &#123;</span><br><span class="line">        if (req.status &#x3D;&#x3D;&#x3D; 200) &#123; </span><br><span class="line">                resolve(req.responseText);</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                reject(new Error(req.statusText));</span><br><span class="line">            &#125; </span><br><span class="line">        &#125;;</span><br><span class="line">        req.onerror &#x3D; function () &#123;</span><br><span class="line">            reject(new Error(req.statusText));</span><br><span class="line">        &#125;;</span><br><span class="line">        req.send(); </span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line">var URL &#x3D; &quot;&#x2F;try&#x2F;ajax&#x2F;testpromise.php&quot;; </span><br><span class="line">ajax(URL).then(function onFulfilled(value)&#123;</span><br><span class="line">    document.write(&#39;内容是：&#39; + value); </span><br><span class="line">&#125;).catch(function onRejected(error)&#123;</span><br><span class="line">    document.write(&#39;错误：&#39; + error); </span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+上面代码中，resolve 方法和 reject 方法调用时，都带有参数。它们的参数会被传递给回调函数。reject 方法的参数通常是 Error 对象的实例，而 resolve 方法的参数除了正常的值以外，还可能是另一个 Promise 实例，比如像下面这样。<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var p1 &#x3D; new Promise(function(resolve, reject)&#123;</span><br><span class="line">  &#x2F;&#x2F; ... some code</span><br><span class="line">&#125;);</span><br><span class="line">var p2 &#x3D; new Promise(function(resolve, reject)&#123;</span><br><span class="line">  &#x2F;&#x2F; ... some code</span><br><span class="line">  resolve(p1);</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+上面代码中，p1 和 p2 都是 Promise 的实例，但是 p2 的 resolve 方法将 p1 作为参数，这时 p1 的状态就会传递给 p2。如果调用的时候，p1 的状态是 pending，那么 p2 的回调函数就会等待 p1 的状态改变；如果 p1 的状态已经是 fulfilled 或者 rejected，那么 p2 的回调函数将会立刻执行。<h2 id="Promise-prototype-then方法：链式操作"><a href="#Promise-prototype-then方法：链式操作" class="headerlink" title="Promise.prototype.then方法：链式操作"></a>Promise.prototype.then方法：链式操作</h2>Promise.prototype.then 方法返回的是一个新的 Promise 对象，因此可以采用链式写法。<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">getJSON(&quot;&#x2F;posts.json&quot;).then(function(json) &#123;</span><br><span class="line">  return json.post;</span><br><span class="line">&#125;).then(function(post) &#123;</span><br><span class="line">  &#x2F;&#x2F; proceed</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+上面的代码使用 then 方法，依次指定了两个回调函数。第一个回调函数完成以后，会将返回结果作为参数，传入第二个回调函数。<br>如果前一个回调函数返回的是Promise对象，这时后一个回调函数就会等待该Promise对象有了运行结果，才会进一步调用。<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">getJSON(&quot;&#x2F;post&#x2F;1.json&quot;).then(function(post) &#123;</span><br><span class="line">  return getJSON(post.commentURL);</span><br><span class="line">&#125;).then(function(comments) &#123;</span><br><span class="line">  &#x2F;&#x2F; 对comments进行处理</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+这种设计使得嵌套的异步操作，可以被很容易得改写，从回调函数的”横向发展”改为”向下发展”。<h2 id="Promise-prototype-catch方法：捕捉错误"><a href="#Promise-prototype-catch方法：捕捉错误" class="headerlink" title="Promise.prototype.catch方法：捕捉错误"></a>Promise.prototype.catch方法：捕捉错误</h2>Promise.prototype.catch 方法是 Promise.prototype.then(null, rejection) 的别名，用于指定发生错误时的回调函数。<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">getJSON(&quot;&#x2F;posts.json&quot;).then(function(posts) &#123;</span><br><span class="line">  &#x2F;&#x2F; some code</span><br><span class="line">&#125;).catch(function(error) &#123;</span><br><span class="line">  &#x2F;&#x2F; 处理前一个回调函数运行时发生的错误</span><br><span class="line">  console.log(&#39;发生错误！&#39;, error);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+Promise 对象的错误具有”冒泡”性质，会一直向后传递，直到被捕获为止。也就是说，错误总是会被下一个 catch 语句捕获。<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">getJSON(&quot;&#x2F;post&#x2F;1.json&quot;).then(function(post) &#123;</span><br><span class="line">  return getJSON(post.commentURL);</span><br><span class="line">&#125;).then(function(comments) &#123;</span><br><span class="line">  &#x2F;&#x2F; some code</span><br><span class="line">&#125;).catch(function(error) &#123;</span><br><span class="line">  &#x2F;&#x2F; 处理前两个回调函数的错误</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h2 id="Promise-all方法，Promise-race方法"><a href="#Promise-all方法，Promise-race方法" class="headerlink" title="Promise.all方法，Promise.race方法"></a>Promise.all方法，Promise.race方法</h2>Promise.all 方法用于将多个 Promise 实例，包装成一个新的 Promise 实例。<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var p &#x3D; Promise.all([p1,p2,p3]);</span><br></pre></td></tr></table></figure>
+上面代码中，Promise.all 方法接受一个数组作为参数，p1、p2、p3 都是 Promise 对象的实例。（Promise.all 方法的参数不一定是数组，但是必须具有 iterator 接口，且返回的每个成员都是 Promise 实例。）<br>p 的状态由 p1、p2、p3 决定，分成两种情况。</li>
+</ol>
+<ul>
+<li>（1）只有p1、p2、p3的状态都变成fulfilled，p的状态才会变成fulfilled，此时p1、p2、p3的返回值组成一个数组，传递给p的回调函数。</li>
+<li>（2）只要p1、p2、p3之中有一个被rejected，p的状态就变成rejected，此时第一个被reject的实例的返回值，会传递给p的回调函数。<br>下面是一个具体的例子。<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F; 生成一个Promise对象的数组</span><br><span class="line">var promises &#x3D; [2, 3, 5, 7, 11, 13].map(function(id)&#123;</span><br><span class="line">  return getJSON(&quot;&#x2F;post&#x2F;&quot; + id + &quot;.json&quot;);</span><br><span class="line">&#125;);</span><br><span class="line">Promise.all(promises).then(function(posts) &#123;</span><br><span class="line">  &#x2F;&#x2F; ...  </span><br><span class="line">&#125;).catch(function(reason)&#123;</span><br><span class="line">  &#x2F;&#x2F; ...</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+Promise.race 方法同样是将多个 Promise 实例，包装成一个新的 Promise 实例。<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var p &#x3D; Promise.race([p1,p2,p3]);</span><br></pre></td></tr></table></figure>
+上面代码中，只要p1、p2、p3之中有一个实例率先改变状态，p的状态就跟着改变。那个率先改变的Promise实例的返回值，就传递给p的返回值。<br>如果Promise.all方法和Promise.race方法的参数，不是Promise实例，就会先调用下面讲到的Promise.resolve方法，将参数转为Promise实例，再进一步处理。<h2 id="Promise-resolve-方法，Promise-reject-方法"><a href="#Promise-resolve-方法，Promise-reject-方法" class="headerlink" title="Promise.resolve 方法，Promise.reject 方法"></a>Promise.resolve 方法，Promise.reject 方法</h2>有时需要将现有对象转为Promise对象，Promise.resolve方法就起到这个作用。<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var jsPromise &#x3D; Promise.resolve($.ajax(&#39;&#x2F;whatever.json&#39;));</span><br></pre></td></tr></table></figure>
+上面代码将 jQuery 生成 deferred 对象，转为一个新的 ES6 的 Promise 对象。<br>如果 Promise.resolve 方法的参数，不是具有 then 方法的对象（又称 thenable 对象），则返回一个新的 Promise 对象，且它的状态为fulfilled。<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var p &#x3D; Promise.resolve(&#39;Hello&#39;);</span><br><span class="line">p.then(function (s)&#123;</span><br><span class="line">  console.log(s)</span><br><span class="line">&#125;);</span><br><span class="line">&#x2F;&#x2F; Hello</span><br></pre></td></tr></table></figure>
+上面代码生成一个新的Promise对象的实例p，它的状态为fulfilled，所以回调函数会立即执行，Promise.resolve方法的参数就是回调函数的参数。<br>如果Promise.resolve方法的参数是一个Promise对象的实例，则会被原封不动地返回。<br>Promise.reject(reason)方法也会返回一个新的Promise实例，该实例的状态为rejected。Promise.<br>reject方法的参数reason，会被传递给实例的回调函数。<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var p &#x3D; Promise.reject(&#39;出错了&#39;);</span><br><span class="line">p.then(null, function (s)&#123;</span><br><span class="line">  console.log(s)</span><br><span class="line">&#125;);</span><br><span class="line">&#x2F;&#x2F; 出错了</span><br></pre></td></tr></table></figure>
+上面代码生成一个Promise对象的实例，状态为rejected，回调函数会立即执行。<blockquote>
+<p><strong>参考链接：</strong></p>
+<ul>
+<li><a href="https://wohugb.gitbooks.io/ecmascript-6/content/docs/promise.html" target="_blank" rel="noopener">https://wohugb.gitbooks.io/ecmascript-6/content/docs/promise.html</a></li>
+<li><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise" target="_blank" rel="noopener">https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise</a></li>
+<li><a href="http://qingtong234.github.io/2016/01/14/javascript%E4%B8%AD%E7%9A%84promise%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B-1/" target="_blank" rel="noopener">http://qingtong234.github.io/2016/01/14/javascript%E4%B8%AD%E7%9A%84promise%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B-1/</a></li>
+</ul>
+</blockquote>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>JavaScript</category>
+        <category>Promise 对象</category>
+      </categories>
+      <tags>
+        <tag>JavaScript</tag>
+        <tag>Promise 对象</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Hello World</title>
     <url>/2020/07/17/hello-world/</url>
     <content><![CDATA[<p>欢迎来到 <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>！这是您的第一篇文章。检查一下<a href="https://hexo.io/docs/" target="_blank" rel="noopener">文件资料</a>有关更多信息。如果您在使用Hexo时遇到任何问题，可以在以下位置找到答案<a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">故障排除</a></p>
@@ -32,8 +151,66 @@
         <category>Zepto</category>
       </categories>
       <tags>
-        <tag>Zepto</tag>
         <tag>JavaScript</tag>
+        <tag>Zepto</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用JS代码实现点击按钮下载文件</title>
+    <url>/2020/07/21/%E4%BD%BF%E7%94%A8JS%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0%E7%82%B9%E5%87%BB%E6%8C%89%E9%92%AE%E4%B8%8B%E8%BD%BD%E6%96%87%E4%BB%B6/</url>
+    <content><![CDATA[<p>有时候我们在网页上需要增加一个下载按钮，让用户能够点击后下载页面上的资料，那么怎样才能实现功能呢？今天小编给大家分享两种方法实现js实现点击按钮下载文件，需要的朋友参考下吧</p>
+<a id="more"></a>
+<p>有时候我们在网页上需要增加一个下载按钮，让用户能够点击后下载页面上的资料，那么怎样才能实现功能呢？这里有两种方法：<br>现在需要在页面上添加一个下载按钮，点击按钮下载文件。<br>题外话，这个下载图标是引用的 font-awesome 上面的。使用时，首先将 font-awesome 整个文件夹下载下来，利用bower或者是自己去官网上面下载都行。<br>将整个文件夹放在项目文件中之后，在页面上面引入css文件</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;link href&#x3D;&quot;libs&#x2F;font-awesome-4.7.0&#x2F;css&#x2F;font-awesome.min.css&quot; type&#x3D;&quot;text&#x2F;css&quot; rel&#x3D;&quot;stylesheet&quot;&gt;</span><br></pre></td></tr></table></figure>
+<p>在页面上可以开始使用所需要的图标了</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;i class&#x3D;&quot;fa fa-download&quot; aria-hidden&#x3D;&quot;true&quot; title&#x3D;&quot;下载&quot;&gt;&lt;&#x2F;i&gt;</span><br></pre></td></tr></table></figure>
+<p><strong>1.下载项目中的文件</strong><br>如果要下载的是一个excel文件模板，可以先将该文件放在项目文件夹下面，然后在页面下载按钮上加上onclick事件：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;i class&#x3D;&quot;fa fa-download&quot; aria-hidden&#x3D;&quot;true&quot; title&#x3D;&quot;下载&quot; onclick&#x3D;&quot;window.open(&#39;file&#x2F;user.xlsx&#39;)&quot;&gt;&lt;&#x2F;i&gt;</span><br></pre></td></tr></table></figure>
+<p>这样在点击图标之后，文件就会自动下载了。<br><strong>2.发送请求地址下载文件</strong><br>JQuery的ajax函数的返回类型只有xml、text、json、html等类型，没有“流”类型，所以我们要实现ajax下载，不能够使用相应的ajax函数进行文件下载。但可以用js生成一个form，用这个form提交参数，并返回“流”类型的数据。在实现过程中，页面也没有进行刷新。</p>
+<p><strong>1）get请求</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$(&#39;.download&#39;).click(function () &#123;</span><br><span class="line">    var tt &#x3D; new Date().getTime();</span><br><span class="line">    var url &#x3D; &#39;http:&#x2F;&#x2F;192.168.1.231:8080&#x2F;91survey&#x2F;ws&#x2F;excel&#x2F;download&#39;;</span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 使用form表单来发送请求</span><br><span class="line">     * 1.method属性用来设置请求的类型——post还是get</span><br><span class="line">     * 2.action属性用来设置请求路径。</span><br><span class="line">     * </span><br><span class="line">     *&#x2F;</span><br><span class="line">    var form &#x3D; $(&quot;&lt;form&gt;&quot;); &#x2F;&#x2F;定义一个form表单</span><br><span class="line">    form.attr(&quot;style&quot;, &quot;display:none&quot;);</span><br><span class="line">    form.attr(&quot;target&quot;, &quot;&quot;);</span><br><span class="line">    form.attr(&quot;method&quot;, &quot;get&quot;); &#x2F;&#x2F;请求类型</span><br><span class="line">    form.attr(&quot;action&quot;, url); &#x2F;&#x2F;请求地址</span><br><span class="line">    $(&quot;body&quot;).append(form); &#x2F;&#x2F;将表单放置在web中</span><br><span class="line">    &#x2F;**</span><br><span class="line">     * input标签主要用来传递请求所需的参数：</span><br><span class="line">     *</span><br><span class="line">     * 1.name属性是传递请求所需的参数名.</span><br><span class="line">     * 2.value属性是传递请求所需的参数值.</span><br><span class="line">     *</span><br><span class="line">     * 3.当为get类型时，请求所需的参数用input标签来传递，直接写在URL后面是无效的。</span><br><span class="line">     * 4.当为post类型时，queryString参数直接写在URL后面，formData参数则用input标签传递</span><br><span class="line">     * 有多少数据则使用多少input标签</span><br><span class="line">     *</span><br><span class="line">     *&#x2F;</span><br><span class="line">    var input1 &#x3D; $(&quot;&lt;input&gt;&quot;);</span><br><span class="line">    input1.attr(&quot;type&quot;, &quot;hidden&quot;);</span><br><span class="line">    input1.attr(&quot;name&quot;, &quot;tt&quot;);</span><br><span class="line">    input1.attr(&quot;value&quot;, tt);</span><br><span class="line">    form.append(input1);</span><br><span class="line">    var input2 &#x3D; $(&quot;&lt;input&gt;&quot;);</span><br><span class="line">    input2.attr(&quot;type&quot;, &quot;hidden&quot;);</span><br><span class="line">    input2.attr(&quot;name&quot;, &quot;companyId&quot;);</span><br><span class="line">    input2.attr(&quot;value&quot;, companyId);</span><br><span class="line">    form.append(input2);</span><br><span class="line">    form.submit(); &#x2F;&#x2F;表单提交</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p><strong>2）post请求</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$(&#39;.download&#39;).click(function () &#123;</span><br><span class="line">    var tt &#x3D; newDate().getTime();</span><br><span class="line">    var url &#x3D; restUrl + &#39;&#x2F;excel&#x2F;download?userId&#x3D;&#39; + userId;</span><br><span class="line">    var form &#x3D; $(&quot;&lt;form&gt;&quot;); &#x2F;&#x2F;定义一个form表单</span><br><span class="line">    form.attr(&quot;style&quot;, &quot;display:none&quot;);</span><br><span class="line">    form.attr(&quot;target&quot;, &quot;&quot;);</span><br><span class="line">    form.attr(&quot;method&quot;, &quot;post&quot;); &#x2F;&#x2F;请求类型</span><br><span class="line">    form.attr(&quot;action&quot;, url); &#x2F;&#x2F;请求地址</span><br><span class="line">    $(&quot;body&quot;).append(form); &#x2F;&#x2F;将表单放置在web中</span><br><span class="line">    var input1 &#x3D; $(&quot;&lt;input&gt;&quot;);</span><br><span class="line">    input1.attr(&quot;type&quot;, &quot;hidden&quot;);</span><br><span class="line">    input1.attr(&quot;name&quot;, &quot;tt&quot;);</span><br><span class="line">    input1.attr(&quot;value&quot;, tt);</span><br><span class="line">    form.append(input1);</span><br><span class="line">    var input2 &#x3D; $(&quot;&lt;input&gt;&quot;);</span><br><span class="line">    input2.attr(&quot;type&quot;, &quot;hidden&quot;);</span><br><span class="line">    input2.attr(&quot;name&quot;, &quot;companyId&quot;);</span><br><span class="line">    input2.attr(&quot;value&quot;, companyId);</span><br><span class="line">    form.append(input2);</span><br><span class="line">    form.submit(); &#x2F;&#x2F;表单提交</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>完成后，在页面上面点击下载图标，文件就会自动下载了。</p>
+]]></content>
+      <categories>
+        <category>JavaScript</category>
+      </categories>
+      <tags>
+        <tag>JavaScript</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>autocomplete 属性</title>
+    <url>/2020/10/12/autocomplete-%E5%B1%9E%E6%80%A7/</url>
+    <content><![CDATA[<h2 id="HTML-lt-input-gt-autocomplete-属性"><a href="#HTML-lt-input-gt-autocomplete-属性" class="headerlink" title="HTML &lt;input&gt; autocomplete 属性"></a>HTML &lt;input&gt; autocomplete 属性</h2><a id="more"></a>
+<h4 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h4><p>启用自动完成功能的表单（其中一个输入字段禁用了自动完成）：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;form action&#x3D;&quot;demo_form.asp&quot; method&#x3D;&quot;get&quot; autocomplete&#x3D;&quot;on&quot;&gt;</span><br><span class="line">  First name:&lt;input type&#x3D;&quot;text&quot; name&#x3D;&quot;fname&quot; &#x2F;&gt;&lt;br &#x2F;&gt;</span><br><span class="line">  Last name: &lt;input type&#x3D;&quot;text&quot; name&#x3D;&quot;lname&quot; &#x2F;&gt;&lt;br &#x2F;&gt;</span><br><span class="line">  E-mail: &lt;input type&#x3D;&quot;email&quot; name&#x3D;&quot;email&quot; autocomplete&#x3D;&quot;off&quot; &#x2F;&gt;&lt;br &#x2F;&gt;</span><br><span class="line">  &lt;input type&#x3D;&quot;submit&quot; &#x2F;&gt;</span><br><span class="line">&lt;&#x2F;form&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="定义和用法"><a href="#定义和用法" class="headerlink" title="定义和用法"></a>定义和用法</h4><p><code>autocomplete</code> 属性规定输入字段是否应该启用自动完成功能。<br>自动完成允许浏览器预测对字段的输入。当用户在字段开始键入时，浏览器基于之前键入过的值，应该显示出在字段中填写的选项。<br><strong>注释</strong>：autocomplete 属性适用于 &lt;form&gt;，以及下面的 &lt;input&gt; 类型：text, search, url, telephone, email, password, datepickers, range 以及 color。<br><strong>提示</strong>：在某些浏览器中，您可能需要手动启用自动完成功能。</p>
+<h4 id="HTML-4-01-与-HTML-5-之间的差异"><a href="#HTML-4-01-与-HTML-5-之间的差异" class="headerlink" title="HTML 4.01 与 HTML 5 之间的差异"></a>HTML 4.01 与 HTML 5 之间的差异</h4><p>autocomplete 属性是 HTML5 中的新属性。</p>
+<h4 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h4><p>&lt;input autocomplete=”value”&gt;</p>
+<h4 id="属性值"><a href="#属性值" class="headerlink" title="属性值"></a>属性值</h4><table>
+<thead>
+<tr>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>on</td>
+<td>默认。规定启用自动完成功能。</td>
+</tr>
+<tr>
+<td>off</td>
+<td>规定禁用自动完成功能。</td>
+</tr>
+</tbody></table>
+]]></content>
+      <tags>
+        <tag>html</tag>
       </tags>
   </entry>
   <entry>
@@ -96,183 +273,6 @@
       </categories>
       <tags>
         <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>WebStorm 中出现Warnings：&#39;var&#39; used instead of &#39;let&#39; or &#39;const&#39;的解决办法</title>
-    <url>/2020/07/18/WebStorm/</url>
-    <content><![CDATA[<p>WebStorm中出现Warnings：’var’ used instead of ‘let’ or ‘const’的解决办法</p>
-<a id="more"></a>
-<p>点击File→Settings→Language &amp; Frameworks→JavaScript<br>将JavaScript language version中的ECMAScript 6切换为ECMAScript 5.1即可<br><a href="https://img-blog.csdnimg.cn/20190411211655595.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MjAzMjEwNw==,size_16,color_FFFFFF,t_70" target="_blank" rel="noopener">!img</a></p>
-]]></content>
-      <categories>
-        <category>WebStorm</category>
-      </categories>
-      <tags>
-        <tag>WebStorm</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>CSS中的BFC详解</title>
-    <url>/2020/07/20/CSS%E4%B8%AD%E7%9A%84BFC%E8%AF%A6%E8%A7%A3/</url>
-    <content><![CDATA[<p>这篇文章是我对BFC的理解及总结，带你揭开BFC的面纱。你将会知道BFC是什么，形成BFC的条件，BFC的相关特性，以及他的实际应用。</p>
-<a id="more"></a>
-<h2 id="一、何为BFC"><a href="#一、何为BFC" class="headerlink" title="一、何为BFC"></a>一、何为BFC</h2><p>BFC（Block Formatting Context）格式化上下文，是Web页面中盒模型布局的CSS渲染模式，指一个独立的渲染区域或者说是一个隔离的独立容器。</p>
-<h2 id="二、形成BFC的条件"><a href="#二、形成BFC的条件" class="headerlink" title="二、形成BFC的条件"></a>二、形成BFC的条件</h2><p>1、浮动元素，float 除 none 以外的值；<br>2、定位元素，position（absolute，fixed）；<br>3、display 为以下其中之一的值 inline-block，table-cell，table-caption；<br>4、overflow 除了 visible 以外的值（hidden，auto，scroll）；</p>
-<h2 id="三、BFC的特性"><a href="#三、BFC的特性" class="headerlink" title="三、BFC的特性"></a>三、BFC的特性</h2><p>1.内部的Box会在垂直方向上一个接一个的放置。<br>2.垂直方向上的距离由margin决定<br>3.bfc的区域不会与float的元素区域重叠。<br>4.计算bfc的高度时，浮动元素也参与计算<br>5.bfc就是页面上的一个独立容器，容器里面的子元素不会影响外面元素。<br>看到这里是不是有丈二和尚摸不着头脑的感觉，下面我就用案例来帮助理解认识：</p>
-<h2 id="四、实践是检验真理的唯一标准"><a href="#四、实践是检验真理的唯一标准" class="headerlink" title="四、实践是检验真理的唯一标准"></a>四、实践是检验真理的唯一标准</h2><h3 id="1-BFC中的盒子对齐"><a href="#1-BFC中的盒子对齐" class="headerlink" title="1. BFC中的盒子对齐"></a>1. BFC中的盒子对齐</h3><p>特性的第一条是：内部的Box（块级元素）会在垂直方向上一个接一个的放置。（这条特性不必纠结，即便不在BFC里块级盒子也会垂直排列）</p>
-<h3 id="2-外边距折叠"><a href="#2-外边距折叠" class="headerlink" title="2. 外边距折叠"></a>2. 外边距折叠</h3><p>特性的第二条：垂直方向上的距离由margin决定<br>在常规文档流中，两个兄弟盒子之间的垂直距离是由他们的外边距所决定的，但不是他们的两个外边距之和，而是以较大的为准。<br>html：</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"container"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"box"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"box"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>css：</p>
-<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.container</span> &#123;</span><br><span class="line">  <span class="attribute">overflow</span>: hidden;</span><br><span class="line">  <span class="attribute">width</span>: <span class="number">100px</span>;</span><br><span class="line">  <span class="attribute">height</span>: <span class="number">100px</span>;</span><br><span class="line">  <span class="attribute">background-color</span>: red;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.box1</span> &#123;</span><br><span class="line">  <span class="attribute">height</span>: <span class="number">20px</span>;</span><br><span class="line">  <span class="attribute">margin</span>: <span class="number">10px</span> <span class="number">0</span>;</span><br><span class="line">  <span class="attribute">background-color</span>: green;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.box2</span> &#123;</span><br><span class="line">	<span class="attribute">height</span>: <span class="number">20px</span>;</span><br><span class="line">	<span class="attribute">margin</span>: <span class="number">20px</span> <span class="number">0</span>;</span><br><span class="line">	<span class="attribute">background-color</span>: green;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p> 这里我门可以看到，第一个子盒子有上边距（不会发生margin穿透的问题）；两个子盒子的垂直距离为20px而不是30px，因为垂直外边距会折叠，间距以较大的为准。<br> 那么有没有方法让垂直外边距不折叠呢？答案是：有。特性的第5条就说了：bfc就是页面上的一个独立容器，容器里面的子元素不会影响外面元素，同样外面的元素不会影响到BFC内的元素。所以就让box1或box2再处于另一个BFC中就行了。<br>html：</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"container"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"wrapper"</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"box1"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"box2"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>css：</p>
-<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.container</span> &#123;</span><br><span class="line">	<span class="attribute">overflow</span>: hidden;</span><br><span class="line">	<span class="attribute">width</span>: <span class="number">100px</span>;</span><br><span class="line">	<span class="attribute">height</span>: <span class="number">100px</span>;</span><br><span class="line">	<span class="attribute">background-color</span>: red;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.wrapper</span> &#123;</span><br><span class="line">	<span class="attribute">overflow</span>: hidden;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.box1</span> &#123;</span><br><span class="line">	<span class="attribute">height</span>: <span class="number">20px</span>;</span><br><span class="line">	<span class="attribute">margin</span>: <span class="number">10px</span> <span class="number">0</span>;</span><br><span class="line">	<span class="attribute">background-color</span>: green;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.box2</span> &#123;</span><br><span class="line">	<span class="attribute">height</span>: <span class="number">20px</span>;</span><br><span class="line">	<span class="attribute">margin</span>: <span class="number">20px</span> <span class="number">0</span>;</span><br><span class="line">	<span class="attribute">background-color</span>: green;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>（3）不被浮动元素覆盖<br>以常见的<strong><code>两栏布局</code></strong>为例。<br>左边固定宽度，右边不设宽，因此右边的宽度自适应，随浏览器窗口大小的变化而变化。<br>html：</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"column"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"column"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>css：</p>
-<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.column</span><span class="selector-pseudo">:nth-of-type(1)</span> &#123;</span><br><span class="line">	<span class="attribute">float</span>: left;</span><br><span class="line">	<span class="attribute">width</span>: <span class="number">200px</span>;</span><br><span class="line">	<span class="attribute">height</span>: <span class="number">300px</span>;</span><br><span class="line">	<span class="attribute">margin-right</span>: <span class="number">10px</span>;</span><br><span class="line">	<span class="attribute">background-color</span>: red;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.column</span><span class="selector-pseudo">:nth-of-type(2)</span> &#123;</span><br><span class="line">	<span class="attribute">overflow</span>: hidden;<span class="comment">/*创建bfc */</span></span><br><span class="line">	<span class="attribute">height</span>: <span class="number">300px</span>;</span><br><span class="line">	<span class="attribute">background-color</span>: purple;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>还有<strong><code>三栏布局</code></strong>。</p>
-<p>左右两边固定宽度，中间不设宽，因此中间的宽度自适应，随浏览器的大小变化而变化。<br>html：</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"contain"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"column"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"column"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"column"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>css：</p>
-<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.column</span><span class="selector-pseudo">:nth-of-type(1)</span>,</span><br><span class="line"><span class="selector-class">.column</span><span class="selector-pseudo">:nth-of-type(2)</span> &#123;</span><br><span class="line">	<span class="attribute">float</span>: left;</span><br><span class="line">	<span class="attribute">width</span>: <span class="number">100px</span>;</span><br><span class="line">	<span class="attribute">height</span>: <span class="number">300px</span>;</span><br><span class="line">	<span class="attribute">background-color</span>: green;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.column</span><span class="selector-pseudo">:nth-of-type(2)</span> &#123;</span><br><span class="line">	<span class="attribute">float</span>: right;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.column</span><span class="selector-pseudo">:nth-of-type(3)</span> &#123;</span><br><span class="line">	<span class="attribute">overflow</span>: hidden;  <span class="comment">/*创建bfc*/</span></span><br><span class="line">	<span class="attribute">height</span>: <span class="number">300px</span>;</span><br><span class="line">	<span class="attribute">background-color</span>: red;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>也可以用来<strong><code>防止字体环绕</code></strong>：</p>
-<p>众所周知，浮动的盒子会遮盖下面的盒子，但是下面盒子里的文字是不会被遮盖的，文字反而还会环绕浮动的盒子。这也是一个比较有趣的特性。</p>
-<p>html：</p>
-<pre><code>&lt;div class=&quot;left&quot;&gt;&lt;/div&gt;
-&lt;p&gt;你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好
-   你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好
-   你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好
-&lt;/p&gt;</code></pre><p>css：</p>
-<p>（1）环绕</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.left &#123;</span><br><span class="line">	float: left;</span><br><span class="line">	width: 100px;</span><br><span class="line">	height: 100px;</span><br><span class="line">	background-color: yellow;</span><br><span class="line">&#125;	</span><br><span class="line">p &#123;</span><br><span class="line">	background-color: green;</span><br><span class="line">	 &#x2F;* overflow: hidden; *&#x2F;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>（2）利用bfc防止环绕</p>
-<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.left</span> &#123;</span><br><span class="line">	<span class="attribute">float</span>: left;</span><br><span class="line">	<span class="attribute">width</span>: <span class="number">100px</span>;</span><br><span class="line">	<span class="attribute">height</span>: <span class="number">100px</span>;</span><br><span class="line">	<span class="attribute">background-color</span>: yellow;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-tag">p</span> &#123;</span><br><span class="line">	<span class="attribute">background-color</span>: green;</span><br><span class="line">	<span class="attribute">overflow</span>: hidden;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="（4）BFC包含浮动的块"><a href="#（4）BFC包含浮动的块" class="headerlink" title="（4）BFC包含浮动的块"></a>（4）BFC包含浮动的块</h3><p>这个是大家再熟悉不过的了，利用overflow:hidden清除浮动嘛，因为浮动的盒子无法撑出处于标准文档流的父盒子的height。这个就不过多解释了，相信大家都早已理解。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>我希望这篇文章已经向你展示了BFC的相关特性，以及他们如何影响元素在页面上的视觉定位。所有的例子都展示了它们在实际案例中的应用，这应该会使得他们更加清晰。</p>
-<p>如果你有任何东西想要补充，请在评论中留言，欢迎共同讨论。</p>
-]]></content>
-      <categories>
-        <category>CSS</category>
-      </categories>
-      <tags>
-        <tag>CSS</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>使用JS代码实现点击按钮下载文件</title>
-    <url>/2020/07/21/%E4%BD%BF%E7%94%A8JS%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0%E7%82%B9%E5%87%BB%E6%8C%89%E9%92%AE%E4%B8%8B%E8%BD%BD%E6%96%87%E4%BB%B6/</url>
-    <content><![CDATA[<p>有时候我们在网页上需要增加一个下载按钮，让用户能够点击后下载页面上的资料，那么怎样才能实现功能呢？今天小编给大家分享两种方法实现js实现点击按钮下载文件，需要的朋友参考下吧</p>
-<a id="more"></a>
-<p>有时候我们在网页上需要增加一个下载按钮，让用户能够点击后下载页面上的资料，那么怎样才能实现功能呢？这里有两种方法：<br>现在需要在页面上添加一个下载按钮，点击按钮下载文件。<br>题外话，这个下载图标是引用的 font-awesome 上面的。使用时，首先将 font-awesome 整个文件夹下载下来，利用bower或者是自己去官网上面下载都行。<br>将整个文件夹放在项目文件中之后，在页面上面引入css文件</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;link href&#x3D;&quot;libs&#x2F;font-awesome-4.7.0&#x2F;css&#x2F;font-awesome.min.css&quot; type&#x3D;&quot;text&#x2F;css&quot; rel&#x3D;&quot;stylesheet&quot;&gt;</span><br></pre></td></tr></table></figure>
-<p>在页面上可以开始使用所需要的图标了</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;i class&#x3D;&quot;fa fa-download&quot; aria-hidden&#x3D;&quot;true&quot; title&#x3D;&quot;下载&quot;&gt;&lt;&#x2F;i&gt;</span><br></pre></td></tr></table></figure>
-<p><strong>1.下载项目中的文件</strong><br>如果要下载的是一个excel文件模板，可以先将该文件放在项目文件夹下面，然后在页面下载按钮上加上onclick事件：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;i class&#x3D;&quot;fa fa-download&quot; aria-hidden&#x3D;&quot;true&quot; title&#x3D;&quot;下载&quot; onclick&#x3D;&quot;window.open(&#39;file&#x2F;user.xlsx&#39;)&quot;&gt;&lt;&#x2F;i&gt;</span><br></pre></td></tr></table></figure>
-<p>这样在点击图标之后，文件就会自动下载了。<br><strong>2.发送请求地址下载文件</strong><br>JQuery的ajax函数的返回类型只有xml、text、json、html等类型，没有“流”类型，所以我们要实现ajax下载，不能够使用相应的ajax函数进行文件下载。但可以用js生成一个form，用这个form提交参数，并返回“流”类型的数据。在实现过程中，页面也没有进行刷新。</p>
-<p><strong>1）get请求</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$(&#39;.download&#39;).click(function () &#123;</span><br><span class="line">    var tt &#x3D; new Date().getTime();</span><br><span class="line">    var url &#x3D; &#39;http:&#x2F;&#x2F;192.168.1.231:8080&#x2F;91survey&#x2F;ws&#x2F;excel&#x2F;download&#39;;</span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 使用form表单来发送请求</span><br><span class="line">     * 1.method属性用来设置请求的类型——post还是get</span><br><span class="line">     * 2.action属性用来设置请求路径。</span><br><span class="line">     * </span><br><span class="line">     *&#x2F;</span><br><span class="line">    var form &#x3D; $(&quot;&lt;form&gt;&quot;); &#x2F;&#x2F;定义一个form表单</span><br><span class="line">    form.attr(&quot;style&quot;, &quot;display:none&quot;);</span><br><span class="line">    form.attr(&quot;target&quot;, &quot;&quot;);</span><br><span class="line">    form.attr(&quot;method&quot;, &quot;get&quot;); &#x2F;&#x2F;请求类型</span><br><span class="line">    form.attr(&quot;action&quot;, url); &#x2F;&#x2F;请求地址</span><br><span class="line">    $(&quot;body&quot;).append(form); &#x2F;&#x2F;将表单放置在web中</span><br><span class="line">    &#x2F;**</span><br><span class="line">     * input标签主要用来传递请求所需的参数：</span><br><span class="line">     *</span><br><span class="line">     * 1.name属性是传递请求所需的参数名.</span><br><span class="line">     * 2.value属性是传递请求所需的参数值.</span><br><span class="line">     *</span><br><span class="line">     * 3.当为get类型时，请求所需的参数用input标签来传递，直接写在URL后面是无效的。</span><br><span class="line">     * 4.当为post类型时，queryString参数直接写在URL后面，formData参数则用input标签传递</span><br><span class="line">     * 有多少数据则使用多少input标签</span><br><span class="line">     *</span><br><span class="line">     *&#x2F;</span><br><span class="line">    var input1 &#x3D; $(&quot;&lt;input&gt;&quot;);</span><br><span class="line">    input1.attr(&quot;type&quot;, &quot;hidden&quot;);</span><br><span class="line">    input1.attr(&quot;name&quot;, &quot;tt&quot;);</span><br><span class="line">    input1.attr(&quot;value&quot;, tt);</span><br><span class="line">    form.append(input1);</span><br><span class="line">    var input2 &#x3D; $(&quot;&lt;input&gt;&quot;);</span><br><span class="line">    input2.attr(&quot;type&quot;, &quot;hidden&quot;);</span><br><span class="line">    input2.attr(&quot;name&quot;, &quot;companyId&quot;);</span><br><span class="line">    input2.attr(&quot;value&quot;, companyId);</span><br><span class="line">    form.append(input2);</span><br><span class="line">    form.submit(); &#x2F;&#x2F;表单提交</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-
-<p><strong>2）post请求</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$(&#39;.download&#39;).click(function () &#123;</span><br><span class="line">    var tt &#x3D; newDate().getTime();</span><br><span class="line">    var url &#x3D; restUrl + &#39;&#x2F;excel&#x2F;download?userId&#x3D;&#39; + userId;</span><br><span class="line">    var form &#x3D; $(&quot;&lt;form&gt;&quot;); &#x2F;&#x2F;定义一个form表单</span><br><span class="line">    form.attr(&quot;style&quot;, &quot;display:none&quot;);</span><br><span class="line">    form.attr(&quot;target&quot;, &quot;&quot;);</span><br><span class="line">    form.attr(&quot;method&quot;, &quot;post&quot;); &#x2F;&#x2F;请求类型</span><br><span class="line">    form.attr(&quot;action&quot;, url); &#x2F;&#x2F;请求地址</span><br><span class="line">    $(&quot;body&quot;).append(form); &#x2F;&#x2F;将表单放置在web中</span><br><span class="line">    var input1 &#x3D; $(&quot;&lt;input&gt;&quot;);</span><br><span class="line">    input1.attr(&quot;type&quot;, &quot;hidden&quot;);</span><br><span class="line">    input1.attr(&quot;name&quot;, &quot;tt&quot;);</span><br><span class="line">    input1.attr(&quot;value&quot;, tt);</span><br><span class="line">    form.append(input1);</span><br><span class="line">    var input2 &#x3D; $(&quot;&lt;input&gt;&quot;);</span><br><span class="line">    input2.attr(&quot;type&quot;, &quot;hidden&quot;);</span><br><span class="line">    input2.attr(&quot;name&quot;, &quot;companyId&quot;);</span><br><span class="line">    input2.attr(&quot;value&quot;, companyId);</span><br><span class="line">    form.append(input2);</span><br><span class="line">    form.submit(); &#x2F;&#x2F;表单提交</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-
-<p>完成后，在页面上面点击下载图标，文件就会自动下载了。</p>
-]]></content>
-      <categories>
-        <category>JavaScript</category>
-      </categories>
-      <tags>
-        <tag>JavaScript</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Promise对象</title>
-    <url>/2020/09/24/Promise%E5%AF%B9%E8%B1%A1/</url>
-    <content><![CDATA[<p>ECMAscript 6 原生提供了 Promise 对象。<br>Promise 对象代表了未来将要发生的事件，用来传递异步操作的消息。</p>
-<a id="more"></a>
-<h3 id="Promise-对象有以下两个特点"><a href="#Promise-对象有以下两个特点" class="headerlink" title="Promise 对象有以下两个特点:"></a>Promise 对象有以下两个特点:</h3><ol>
-<li>对象的状态不受外界影响。Promise 对象代表一个异步操作，有三种状态：</li>
-</ol>
-<ul>
-<li>pending: 初始状态，不是成功或失败状态。</li>
-<li>fulfilled: 意味着操作成功完成。</li>
-<li>rejected: 意味着操作失败。<br>只有异步操作的结果，可以决定当前是哪一种状态，任何其他操作都无法改变这个状态。这也是 Promise 这个名字的由来，它的英语意思就是「承诺」，表示其他手段无法改变。</li>
-</ul>
-<ol start="2">
-<li>一旦状态改变，就不会再变，任何时候都可以得到这个结果。Promise 对象的状态改变，只有两种可能：从 Pending 变为 Resolved 和从 Pending 变为 Rejected。只要这两种情况发生，状态就凝固了，不会再变了，会一直保持这个结果。就算改变已经发生了，你再对 Promise 对象添加回调函数，也会立即得到这个结果。这与事件（Event）完全不同，事件的特点是，如果你错过了它，再去监听，是得不到结果的。<h3 id="Promise-优缺点"><a href="#Promise-优缺点" class="headerlink" title="Promise 优缺点"></a>Promise 优缺点</h3>有了 Promise 对象，就可以将异步操作以同步操作的流程表达出来，避免了层层嵌套的回调函数。此外，Promise 对象提供统一的接口，使得控制异步操作更加容易。<br>Promise 也有一些缺点。首先，无法取消 Promise，一旦新建它就会立即执行，无法中途取消。其次，如果不设置回调函数，Promise 内部抛出的错误，不会反应到外部。第三，当处于 Pending 状态时，无法得知目前进展到哪一个阶段（刚刚开始还是即将完成）。<h3 id="Promise-创建"><a href="#Promise-创建" class="headerlink" title="Promise 创建"></a>Promise 创建</h3>要想创建一个 promise 对象、可以使用 new 来调用 Promise 的构造器来进行实例化。<br>下面是创建 promise 的步骤：<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var promise &#x3D; new Promise(function(resolve, reject) &#123;</span><br><span class="line">    &#x2F;&#x2F; 异步处理</span><br><span class="line">    &#x2F;&#x2F; 处理结束后、调用resolve 或 reject</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-Promise 构造函数包含一个参数和一个带有 resolve（解析）和 reject（拒绝）两个参数的回调。在回调中执行一些操作（例如异步），如果一切都正常，则调用 resolve，否则调用 reject。<h2 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var myFirstPromise &#x3D; new Promise(function(resolve, reject)&#123;</span><br><span class="line">    &#x2F;&#x2F;当异步代码执行成功时，我们才会调用resolve(...), 当异步代码失败时就会调用reject(...)</span><br><span class="line">    &#x2F;&#x2F;在本例中，我们使用setTimeout(...)来模拟异步代码，实际编码时可能是XHR请求或是HTML5的一些API方法.</span><br><span class="line">    setTimeout(function()&#123;</span><br><span class="line">        resolve(&quot;成功!&quot;); &#x2F;&#x2F;代码正常执行！</span><br><span class="line">    &#125;, 250);</span><br><span class="line">&#125;);</span><br><span class="line">myFirstPromise.then(function(successMessage)&#123;</span><br><span class="line">    &#x2F;&#x2F;successMessage的值是上面调用resolve(...)方法传入的值.</span><br><span class="line">    &#x2F;&#x2F;successMessage参数不一定非要是字符串类型，这里只是举个例子</span><br><span class="line">    document.write(&quot;Yay! &quot; + successMessage);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-对于已经实例化过的 promise 对象可以调用 promise.then() 方法，传递 resolve 和 reject 方法作为回调。<br>promise.then() 是 promise 最为常用的方法。<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">promise.then(onFulfilled, onRejected)</span><br></pre></td></tr></table></figure>
-promise简化了对error的处理，上面的代码我们也可以这样写：<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">promise.then(onFulfilled).catch(onRejected)</span><br></pre></td></tr></table></figure>
-<h2 id="Promise-Ajax"><a href="#Promise-Ajax" class="headerlink" title="Promise Ajax"></a>Promise Ajax</h2>下面是一个用 Promise 对象实现的 Ajax 操作的例子。<h2 id="实例-1"><a href="#实例-1" class="headerlink" title="实例"></a>实例</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">function ajax(URL) &#123;</span><br><span class="line">    return new Promise(function (resolve, reject) &#123;</span><br><span class="line">        var req &#x3D; new XMLHttpRequest(); </span><br><span class="line">        req.open(&#39;GET&#39;, URL, true);</span><br><span class="line">        req.onload &#x3D; function () &#123;</span><br><span class="line">        if (req.status &#x3D;&#x3D;&#x3D; 200) &#123; </span><br><span class="line">                resolve(req.responseText);</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                reject(new Error(req.statusText));</span><br><span class="line">            &#125; </span><br><span class="line">        &#125;;</span><br><span class="line">        req.onerror &#x3D; function () &#123;</span><br><span class="line">            reject(new Error(req.statusText));</span><br><span class="line">        &#125;;</span><br><span class="line">        req.send(); </span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line">var URL &#x3D; &quot;&#x2F;try&#x2F;ajax&#x2F;testpromise.php&quot;; </span><br><span class="line">ajax(URL).then(function onFulfilled(value)&#123;</span><br><span class="line">    document.write(&#39;内容是：&#39; + value); </span><br><span class="line">&#125;).catch(function onRejected(error)&#123;</span><br><span class="line">    document.write(&#39;错误：&#39; + error); </span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-上面代码中，resolve 方法和 reject 方法调用时，都带有参数。它们的参数会被传递给回调函数。reject 方法的参数通常是 Error 对象的实例，而 resolve 方法的参数除了正常的值以外，还可能是另一个 Promise 实例，比如像下面这样。<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var p1 &#x3D; new Promise(function(resolve, reject)&#123;</span><br><span class="line">  &#x2F;&#x2F; ... some code</span><br><span class="line">&#125;);</span><br><span class="line">var p2 &#x3D; new Promise(function(resolve, reject)&#123;</span><br><span class="line">  &#x2F;&#x2F; ... some code</span><br><span class="line">  resolve(p1);</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-上面代码中，p1 和 p2 都是 Promise 的实例，但是 p2 的 resolve 方法将 p1 作为参数，这时 p1 的状态就会传递给 p2。如果调用的时候，p1 的状态是 pending，那么 p2 的回调函数就会等待 p1 的状态改变；如果 p1 的状态已经是 fulfilled 或者 rejected，那么 p2 的回调函数将会立刻执行。<h2 id="Promise-prototype-then方法：链式操作"><a href="#Promise-prototype-then方法：链式操作" class="headerlink" title="Promise.prototype.then方法：链式操作"></a>Promise.prototype.then方法：链式操作</h2>Promise.prototype.then 方法返回的是一个新的 Promise 对象，因此可以采用链式写法。<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">getJSON(&quot;&#x2F;posts.json&quot;).then(function(json) &#123;</span><br><span class="line">  return json.post;</span><br><span class="line">&#125;).then(function(post) &#123;</span><br><span class="line">  &#x2F;&#x2F; proceed</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-上面的代码使用 then 方法，依次指定了两个回调函数。第一个回调函数完成以后，会将返回结果作为参数，传入第二个回调函数。<br>如果前一个回调函数返回的是Promise对象，这时后一个回调函数就会等待该Promise对象有了运行结果，才会进一步调用。<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">getJSON(&quot;&#x2F;post&#x2F;1.json&quot;).then(function(post) &#123;</span><br><span class="line">  return getJSON(post.commentURL);</span><br><span class="line">&#125;).then(function(comments) &#123;</span><br><span class="line">  &#x2F;&#x2F; 对comments进行处理</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-这种设计使得嵌套的异步操作，可以被很容易得改写，从回调函数的”横向发展”改为”向下发展”。<h2 id="Promise-prototype-catch方法：捕捉错误"><a href="#Promise-prototype-catch方法：捕捉错误" class="headerlink" title="Promise.prototype.catch方法：捕捉错误"></a>Promise.prototype.catch方法：捕捉错误</h2>Promise.prototype.catch 方法是 Promise.prototype.then(null, rejection) 的别名，用于指定发生错误时的回调函数。<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">getJSON(&quot;&#x2F;posts.json&quot;).then(function(posts) &#123;</span><br><span class="line">  &#x2F;&#x2F; some code</span><br><span class="line">&#125;).catch(function(error) &#123;</span><br><span class="line">  &#x2F;&#x2F; 处理前一个回调函数运行时发生的错误</span><br><span class="line">  console.log(&#39;发生错误！&#39;, error);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-Promise 对象的错误具有”冒泡”性质，会一直向后传递，直到被捕获为止。也就是说，错误总是会被下一个 catch 语句捕获。<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">getJSON(&quot;&#x2F;post&#x2F;1.json&quot;).then(function(post) &#123;</span><br><span class="line">  return getJSON(post.commentURL);</span><br><span class="line">&#125;).then(function(comments) &#123;</span><br><span class="line">  &#x2F;&#x2F; some code</span><br><span class="line">&#125;).catch(function(error) &#123;</span><br><span class="line">  &#x2F;&#x2F; 处理前两个回调函数的错误</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<h2 id="Promise-all方法，Promise-race方法"><a href="#Promise-all方法，Promise-race方法" class="headerlink" title="Promise.all方法，Promise.race方法"></a>Promise.all方法，Promise.race方法</h2>Promise.all 方法用于将多个 Promise 实例，包装成一个新的 Promise 实例。<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var p &#x3D; Promise.all([p1,p2,p3]);</span><br></pre></td></tr></table></figure>
-上面代码中，Promise.all 方法接受一个数组作为参数，p1、p2、p3 都是 Promise 对象的实例。（Promise.all 方法的参数不一定是数组，但是必须具有 iterator 接口，且返回的每个成员都是 Promise 实例。）<br>p 的状态由 p1、p2、p3 决定，分成两种情况。</li>
-</ol>
-<ul>
-<li>（1）只有p1、p2、p3的状态都变成fulfilled，p的状态才会变成fulfilled，此时p1、p2、p3的返回值组成一个数组，传递给p的回调函数。</li>
-<li>（2）只要p1、p2、p3之中有一个被rejected，p的状态就变成rejected，此时第一个被reject的实例的返回值，会传递给p的回调函数。<br>下面是一个具体的例子。<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F; 生成一个Promise对象的数组</span><br><span class="line">var promises &#x3D; [2, 3, 5, 7, 11, 13].map(function(id)&#123;</span><br><span class="line">  return getJSON(&quot;&#x2F;post&#x2F;&quot; + id + &quot;.json&quot;);</span><br><span class="line">&#125;);</span><br><span class="line">Promise.all(promises).then(function(posts) &#123;</span><br><span class="line">  &#x2F;&#x2F; ...  </span><br><span class="line">&#125;).catch(function(reason)&#123;</span><br><span class="line">  &#x2F;&#x2F; ...</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-Promise.race 方法同样是将多个 Promise 实例，包装成一个新的 Promise 实例。<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var p &#x3D; Promise.race([p1,p2,p3]);</span><br></pre></td></tr></table></figure>
-上面代码中，只要p1、p2、p3之中有一个实例率先改变状态，p的状态就跟着改变。那个率先改变的Promise实例的返回值，就传递给p的返回值。<br>如果Promise.all方法和Promise.race方法的参数，不是Promise实例，就会先调用下面讲到的Promise.resolve方法，将参数转为Promise实例，再进一步处理。<h2 id="Promise-resolve-方法，Promise-reject-方法"><a href="#Promise-resolve-方法，Promise-reject-方法" class="headerlink" title="Promise.resolve 方法，Promise.reject 方法"></a>Promise.resolve 方法，Promise.reject 方法</h2>有时需要将现有对象转为Promise对象，Promise.resolve方法就起到这个作用。<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var jsPromise &#x3D; Promise.resolve($.ajax(&#39;&#x2F;whatever.json&#39;));</span><br></pre></td></tr></table></figure>
-上面代码将 jQuery 生成 deferred 对象，转为一个新的 ES6 的 Promise 对象。<br>如果 Promise.resolve 方法的参数，不是具有 then 方法的对象（又称 thenable 对象），则返回一个新的 Promise 对象，且它的状态为fulfilled。<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var p &#x3D; Promise.resolve(&#39;Hello&#39;);</span><br><span class="line">p.then(function (s)&#123;</span><br><span class="line">  console.log(s)</span><br><span class="line">&#125;);</span><br><span class="line">&#x2F;&#x2F; Hello</span><br></pre></td></tr></table></figure>
-上面代码生成一个新的Promise对象的实例p，它的状态为fulfilled，所以回调函数会立即执行，Promise.resolve方法的参数就是回调函数的参数。<br>如果Promise.resolve方法的参数是一个Promise对象的实例，则会被原封不动地返回。<br>Promise.reject(reason)方法也会返回一个新的Promise实例，该实例的状态为rejected。Promise.<br>reject方法的参数reason，会被传递给实例的回调函数。<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var p &#x3D; Promise.reject(&#39;出错了&#39;);</span><br><span class="line">p.then(null, function (s)&#123;</span><br><span class="line">  console.log(s)</span><br><span class="line">&#125;);</span><br><span class="line">&#x2F;&#x2F; 出错了</span><br></pre></td></tr></table></figure>
-上面代码生成一个Promise对象的实例，状态为rejected，回调函数会立即执行。<blockquote>
-<p><strong>参考链接：</strong></p>
-<ul>
-<li><a href="https://wohugb.gitbooks.io/ecmascript-6/content/docs/promise.html" target="_blank" rel="noopener">https://wohugb.gitbooks.io/ecmascript-6/content/docs/promise.html</a></li>
-<li><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise" target="_blank" rel="noopener">https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise</a></li>
-<li><a href="http://qingtong234.github.io/2016/01/14/javascript%E4%B8%AD%E7%9A%84promise%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B-1/" target="_blank" rel="noopener">http://qingtong234.github.io/2016/01/14/javascript%E4%B8%AD%E7%9A%84promise%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B-1/</a></li>
-</ul>
-</blockquote>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>JavaScript</category>
-        <category>Promise 对象</category>
-      </categories>
-      <tags>
-        <tag>JavaScript</tag>
-        <tag>Promise 对象</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>autocomplete 属性</title>
-    <url>/2020/10/12/autocomplete-%E5%B1%9E%E6%80%A7/</url>
-    <content><![CDATA[<h2 id="HTML-lt-input-gt-autocomplete-属性"><a href="#HTML-lt-input-gt-autocomplete-属性" class="headerlink" title="HTML &lt;input&gt; autocomplete 属性"></a>HTML &lt;input&gt; autocomplete 属性</h2><a id="more"></a>
-<h4 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h4><p>启用自动完成功能的表单（其中一个输入字段禁用了自动完成）：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;form action&#x3D;&quot;demo_form.asp&quot; method&#x3D;&quot;get&quot; autocomplete&#x3D;&quot;on&quot;&gt;</span><br><span class="line">  First name:&lt;input type&#x3D;&quot;text&quot; name&#x3D;&quot;fname&quot; &#x2F;&gt;&lt;br &#x2F;&gt;</span><br><span class="line">  Last name: &lt;input type&#x3D;&quot;text&quot; name&#x3D;&quot;lname&quot; &#x2F;&gt;&lt;br &#x2F;&gt;</span><br><span class="line">  E-mail: &lt;input type&#x3D;&quot;email&quot; name&#x3D;&quot;email&quot; autocomplete&#x3D;&quot;off&quot; &#x2F;&gt;&lt;br &#x2F;&gt;</span><br><span class="line">  &lt;input type&#x3D;&quot;submit&quot; &#x2F;&gt;</span><br><span class="line">&lt;&#x2F;form&gt;</span><br></pre></td></tr></table></figure>
-
-<h4 id="定义和用法"><a href="#定义和用法" class="headerlink" title="定义和用法"></a>定义和用法</h4><p><code>autocomplete</code> 属性规定输入字段是否应该启用自动完成功能。<br>自动完成允许浏览器预测对字段的输入。当用户在字段开始键入时，浏览器基于之前键入过的值，应该显示出在字段中填写的选项。<br><strong>注释</strong>：autocomplete 属性适用于 &lt;form&gt;，以及下面的 &lt;input&gt; 类型：text, search, url, telephone, email, password, datepickers, range 以及 color。<br><strong>提示</strong>：在某些浏览器中，您可能需要手动启用自动完成功能。</p>
-<h4 id="HTML-4-01-与-HTML-5-之间的差异"><a href="#HTML-4-01-与-HTML-5-之间的差异" class="headerlink" title="HTML 4.01 与 HTML 5 之间的差异"></a>HTML 4.01 与 HTML 5 之间的差异</h4><p>autocomplete 属性是 HTML5 中的新属性。</p>
-<h4 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h4><p>&lt;input autocomplete=”value”&gt;</p>
-<h4 id="属性值"><a href="#属性值" class="headerlink" title="属性值"></a>属性值</h4><table>
-<thead>
-<tr>
-<th>值</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>on</td>
-<td>默认。规定启用自动完成功能。</td>
-</tr>
-<tr>
-<td>off</td>
-<td>规定禁用自动完成功能。</td>
-</tr>
-</tbody></table>
-]]></content>
-      <tags>
-        <tag>html</tag>
       </tags>
   </entry>
 </search>
